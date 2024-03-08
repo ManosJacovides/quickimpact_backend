@@ -2,20 +2,21 @@
 const passport=require('passport');
 const express = require('express');
 const app=express();
+require('dotenv').config(); // Reads .env file and makes data available
 
 const mysql=require('mysql2');
 const db=mysql.createPool({
     host: 'localhost',
     user:'root',
-    password: 'bmxgoofs',
+    password: process.env.DB_PASSWORD,
     database:'quickImpactDB',
 });
 
 const GOOGLE_CLIENT_ID="366415380412-latg5l0lq2mjbftlr0er7ni7c89csl2d.apps.googleusercontent.com";
-const GOOGLE_CLIENT_SECRET="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"; //ATTENTION; UDE ENV FILE IF DEPLOYING APP, FOR SECURITY
+const GOOGLE_CLIENT_SECRET=process.env.GOOGLE_CLIENT_SECRET;    
 
 const GITHUB_CLIENT_ID="a89065b08638b87bfa12";
-const GITHUB_CLIENT_SECRET="77edeeb7efc08b25c72aa296a21b1487f9e7d480"; //ATTENTION; UDE ENV FILE IF DEPLOYING APP, FOR SECURITY
+const GITHUB_CLIENT_SECRET=process.env.GITHUB_CLIENT_SECRET;   
 
 
 

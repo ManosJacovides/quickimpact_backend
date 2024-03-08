@@ -6,10 +6,11 @@ const passport=require('passport');
 const authRoute=require("./routes/auth");// redirects to the auth.js code
 const app=express();
 const mysql=require('mysql2');
+require('dotenv').config(); // Reads .env file and makes data available
 const db=mysql.createPool({
     host: 'localhost',
     user:'root',
-    password: 'bmxgoofs',
+    password: process.env.DB_PASSWORD,
     database:'quickImpactDB',
 });
 
