@@ -558,6 +558,88 @@ app.post("/api/insertproject",(req,res)=>{
 
 });
 
+app.post("/api/duplicateproject",(req,res)=>{
+
+    
+
+    // //const id=req.body.id;
+    // const projectName=req.body.projectName;
+    // const projectUserID=req.body.projectUserID;
+    // const description=req.body.description;
+    // const numberofalternatives=req.body.numberofalternatives;
+    // const midpoints=req.body.midpoints;
+
+    // const sqlInsert="INSERT INTO Projects (projectName, projectUserID, description, numberofalternatives, midpoints) VALUES(?,?,?,?,?);"
+    // db.query(sqlInsert, [projectName, projectUserID, description, numberofalternatives, midpoints], (err, result)=>{console.log(err)}
+    
+    //)
+
+
+
+
+
+//     const sqlInsert="INSERT INTO Projects SELECT* FROM Projects WHERE id = ? ;"
+
+//     const originalID=req.body.originalID;
+//     db.query(sqlInsert, [originalID], (err, result)=>{console.log(err)})
+
+
+
+
+// WE DO AN SQL REQUEST TO DUPLICATE ROW WITH ID ORIGINALID AND THE NEW COLUMN SHOULH HAVE THE NAME NEWPROJECTNAME
+    const sqlDuplicate = `
+    INSERT INTO Projects (projectName, projectUserID, description, numberofalternatives, midpoints, projectNotes)
+    SELECT ?, projectUserID, description, numberofalternatives, midpoints, projectNotes
+    FROM Projects 
+    WHERE id = ?;
+`;
+
+const newProjectName = req.body.newProjectName;
+const originalID = req.body.originalID;
+
+db.query(sqlDuplicate, [newProjectName, originalID], (err, result) => {
+    if (err) {
+        console.log(err);
+        // Handle the error appropriately
+    } else {  // Once the INitial SQL REQUEST IS SUCCESSFUL; WE DO ANOTERH SQL REQUEST TO DUPLICATE ALL THE INPUTS OF THE ORIGINAL PROJECT IN THE INPUTS TABLE
+        const insertedId = result.insertId; //WE RETRIEVE THE ID OF THE NEW LINE
+        console.log("Inserted ID:", insertedId);
+
+
+        const sqlDuplicateInputs = `
+        INSERT INTO Inputs (inputProjectID, solutionReference, name, value, unit, eF, category, eFUnit, eFGHG, inputGHGImpact, comments)
+        SELECT ? AS inputProjectID, solutionReference, name, value, unit, eF, category, eFUnit, eFGHG, inputGHGImpact, comments
+        FROM Inputs
+        WHERE inputProjectID = ?;
+                                 `;
+    
+    const newProjectID = insertedId;
+    const originalProjectID = originalID;
+    
+    db.query(sqlDuplicateInputs, [newProjectID, originalProjectID], (err, result) => {
+        if (err) {
+            console.log(err);
+            // Handle the error appropriately
+        } else {
+            // Retrieve the number of affected rows
+            const affectedRows = result.affectedRows;
+            console.log("Number of rows duplicated:", affectedRows);
+    
+            // Now you can proceed with further actions
+        }
+    });
+
+
+
+
+
+
+
+    }
+});
+    
+
+});
 
 
 
